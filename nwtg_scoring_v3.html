@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; font-family: Arial, sans-serif; padding: 24px; border-radius: 16px; }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header h1 { font-size: 26px; font-weight: bold; color: #00cc44; letter-spacing: 3px; text-transform: uppercase; }
+  .header p { font-size: 11px; color: #4a7a4a; letter-spacing: 2px; margin-top: 4px; text-transform: uppercase; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+  .card { background: #121212; border-radius: 14px; padding: 18px 12px 16px; border: 1px solid #1e3a1e; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff3a3a; }
+  .dot-yellow { background: #ffcc00; }
+  .dot-blue { background: #4488ff; }
+  .name-input { background: transparent; border: none; border-bottom: 1px solid #2a4a2a; color: #ccffcc; font-size: 14px; font-weight: bold; text-align: center; width: 100%; padding: 4px 0; outline: none; }
+  .name-input:focus { border-bottom: 1px solid #00cc44; }
+  .score { font-size: 54px; font-weight: bold; line-height: 1; text-align: center; }
+  .score-red { color: #ff4444; }
+  .score-yellow { color: #ffcc00; }
+  .score-blue { color: #4488ff; }
+  .btn-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .btn { border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; padding: 9px 12px; border: none; }
+  .btn-green { background: #145214; color: #00ff55; border: 2px solid #00cc44; }
+  .btn-green:hover { background: #1c6e1c; }
+  .btn-red { background: #4a0d0d; color: #ff6666; border: 2px solid #cc2222; }
+  .btn-red:hover { background: #661414; }
+  .save-row { display: flex; justify-content: center; margin-bottom: 20px; }
+  .save-btn { background: #00cc44; color: #000; border: none; border-radius: 10px; padding: 12px 44px; font-size: 14px; font-weight: bold; cursor: pointer; letter-spacing: 1.5px; text-transform: uppercase; }
+  .save-btn:hover { background: #00e64d; }
+  .divider { height: 1px; background: #1a2e1a; margin-bottom: 16px; }
+  .history-title { text-align: center; font-size: 11px; color: #4a7a4a; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  #history-area { width: 100%; }
+  .no-saves { text-align: center; color: #2a4a2a; font-size: 13px; padding: 20px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { color: #4a8a4a; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 6px 8px; text-align: center; border-bottom: 1px solid #1a2e1a; }
+  tbody tr { border-bottom: 1px solid #111f11; }
+  tbody td { padding: 8px; text-align: center; }
+  .td-round { color: #2a4a2a; font-size: 11px; }
+  .td-red { color: #ff4444; font-weight: bold; }
+  .td-yellow { color: #ffcc00; font-weight: bold; }
+  .td-blue { color: #4488ff; font-weight: bold; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>NWTG Scoring</h1>
+    <p>Score Tracker</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="dot dot-red"></div>
+      <input class="name-input" id="name0" value="Player 1" />
+      <div class="score score-red" id="score0">0</div>
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="change(0,10)">+10</button>
+        <button class="btn btn-green" onclick="change(0,20)">+20</button>
+        <button class="btn btn-red" onclick="change(0,-10)">−10</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="dot dot-yellow"></div>
+      <input class="name-input" id="name1" value="Player 2" />
+      <div class="score score-yellow" id="score1">0</div>
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="change(1,10)">+10</button>
+        <button class="btn btn-green" onclick="change(1,20)">+20</button>
+        <button class="btn btn-red" onclick="change(1,-10)">−10</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="dot dot-blue"></div>
+      <input class="name-input" id="name2" value="Player 3" />
+      <div class="score score-blue" id="score2">0</div>
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="change(2,10)">+10</button>
+        <button class="btn btn-green" onclick="change(2,20)">+20</button>
+        <button class="btn btn-red" onclick="change(2,-10)">−10</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-row">
+    <button class="save-btn" onclick="saveTally()">Save Tally</button>
+  </div>
+
+  <div class="divider"></div>
+  <div class="history-title">— Saved Tallies —</div>
+  <div id="history-area"><div class="no-saves">No saves yet</div></div>
+
+<script>
+  var scores = [0, 0, 0];
+  var tallies = [];
+
+  function change(idx, delta) {
+    scores[idx] += delta;
+    document.getElementById('score' + idx).innerText = scores[idx];
+  }
+
+  function getName(idx) {
+    var val = document.getElementById('name' + idx).value;
+    return (val && val.trim() !== '') ? val.trim() : ('Player ' + (idx + 1));
+  }
+
+  function saveTally() {
+    var entry = {
+      round: tallies.length + 1,
+      names: [getName(0), getName(1), getName(2)],
+      scores: [scores[0], scores[1], scores[2]]
+    };
+    tallies.push(entry);
+    renderTallies();
+  }
+
+  function renderTallies() {
+    var area = document.getElementById('history-area');
+    if (tallies.length === 0) {
+      area.innerHTML = '<div class="no-saves">No saves yet</div>';
+      return;
+    }
+    var n0 = tallies[tallies.length - 1].names[0];
+    var n1 = tallies[tallies.length - 1].names[1];
+    var n2 = tallies[tallies.length - 1].names[2];
+    var html = '<table><thead><tr><th>#</th><th>' + n0 + '</th><th>' + n1 + '</th><th>' + n2 + '</th></tr></thead><tbody>';
+    for (var i = 0; i < tallies.length; i++) {
+      var t = tallies[i];
+      html += '<tr>';
+      html += '<td class="td-round">' + t.round + '</td>';
+      html += '<td class="td-red">' + t.scores[0] + '</td>';
+      html += '<td class="td-yellow">' + t.scores[1] + '</td>';
+      html += '<td class="td-blue">' + t.scores[2] + '</td>';
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    area.innerHTML = html;
+  }
+</script>
+</body>
+</html>
